@@ -47,4 +47,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function tokens()
+    {
+        return $this->hasMany(JWT_Token::class);
+    }
+
+    public function avatarInfo()
+    {
+        return $this->hasOne(File::class, "uuid", "avatar");
+    }
 }
