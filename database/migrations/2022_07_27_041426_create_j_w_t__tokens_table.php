@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string("unique_id")->unique();
             $table->unsignedBigInteger("user_id");
             $table->string("token_title");
-            $table->text("restrictions");
-            $table->text("permissions");
-            $table->timestamp("expires_at");
+            $table->text("restrictions")->nullable();
+            $table->text("permissions")->nullable();
+            $table->timestamp("expires_at")->nullable();
             $table->timestamp("last_used_at")->nullable();
             $table->timestamp("refreshed_at")->nullable();
             $table->timestamps();
