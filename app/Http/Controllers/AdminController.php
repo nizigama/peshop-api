@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Admin\CreateAdminRequest;
+use App\Http\Requests\Admin\LoginAdminRequest;
 use App\Services\AdminUserService;
 use Exception;
 use Illuminate\Http\Request;
@@ -12,8 +13,19 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
 
-    public function login()
+    public function __construct(protected AdminUserService $adminUserService){
+        
+    }
+
+    public function login(LoginAdminRequest $request)
     {
+        try {
+            $token = $this->adminUserService->loginAdminUser($request->dto);
+
+            return response()->json(["message" => "Login successful", "token" => $token]);
+        } catch (Exception $e) {
+            return response()->json(["message" => $e->getMessage()], $e->getCode());
+        }
     }
     public function logout()
     {
@@ -23,10 +35,10 @@ class AdminController extends Controller
     {
     }
 
-    public function store(CreateAdminRequest $request, AdminUserService $adminUserService)
+    public function store(CreateAdminRequest $request)
     {
         try {
-            $adminUserService->createAdminUser($request->dto);
+            $this->adminUserService->createAdminUser($request->dto);
 
             return response()->json(["message" => "Admin user created successfully"]);
         } catch (Exception $e) {

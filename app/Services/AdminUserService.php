@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DTOs\Admin\CreateAdminRequestDTO;
+use App\DTOs\Admin\LoginAdminRequestDTO;
 use App\Models\JWT_Token;
 use App\Models\User;
 use Exception;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class AdminUserService
 {
 
-	public function __construct(protected FileService $fileService)
+	public function __construct(protected FileService $fileService, protected AuthTokenService $authTokenService)
 	{
 	}
 
@@ -46,12 +47,39 @@ class AdminUserService
 				"marketing" => $dto->marketing ?? false
 			]);
 		} catch (Exception $e) {
-			Log::error("PEST-SHOP-API::error",[
-				"message"=>"Failed to create admin user in the AdminUserService class",
-				"dto"=>$dto,
-				"exception"=>$e
+			Log::error("PEST-SHOP-API::error", [
+				"message" => "Failed to create admin user in the AdminUserService class",
+				"dto" => $dto,
+				"exception" => $e
 			]);
 			throw new Exception("Failed to create admin user", 500);
+		}
+	}
+
+	public function loginAdminUser(LoginAdminRequestDTO $dto): string
+	{
+
+		$user = User::where([["email", $dto->email], ["is_admin", true]])->first();
+
+		if (is_null($user)) {
+			throw new Exception("User not found", 404);
+		}
+
+		if (!Hash::check($dto->password, $user->password)) {
+			throw new Exception("Wrong password", 405);
+		}
+
+		try {
+			return $this->authTokenService->createUserToken($user);
+		} catch (\Exception $e) {
+
+			Log::error("PEST-SHOP-API::error", [
+				"message" => "Failed to login admin user in the AdminUserService class",
+				"dto" => $dto,
+				"exception" => $e
+			]);
+
+			throw new Exception("Failed to login admin user", 500);
 		}
 	}
 }
