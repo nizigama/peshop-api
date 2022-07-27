@@ -212,4 +212,16 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+
+    /*
+    |
+    |
+    |-------------------------------------------------------------------------
+    |JWT_TOKEN Configs
+    |-------------------------------------------------------------------------
+    |
+    |These are configurations used to tweak the jwt token for user authentication
+    |
+    */
+    'jwt_expires_after_minutes' => env("JWT_TOKEN_DURATION_IN_MINUTES", 60),
 ];
