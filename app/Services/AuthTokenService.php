@@ -45,7 +45,7 @@ class AuthTokenService
         $tokenIdentifier = Uuid::uuid4()->toString();
         $issuer = Config::get("app.key");
         $issueTime = now()->toDateTimeImmutable();
-        $expireTime = now()->addMinutes(Config::get('app.jwt_expires_after_minutes'))->toDateTimeImmutable();
+        $expireTime = now()->addMinutes(Config::get('protector.jwt_expires_after_minutes'))->toDateTimeImmutable();
 
         $token = $this->configuration->builder()
             // Configures the issuer (iss claim)
