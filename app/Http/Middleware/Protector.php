@@ -9,6 +9,7 @@ use Closure;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 
 class Protector
@@ -45,7 +46,11 @@ class Protector
 
         $userUuid = $validation->claims()->get('uid');
 
-        $token = User::where("uuid", $userUuid)->first()->tokens[0];
+        $token = User::where("uuid", $userUuid)->first()->tokens->last();
+
+        if(is_null($token)){
+            return response()->json(["message" => "Unauthenticated"], Response::HTTP_UNAUTHORIZED);
+        }
 
         if (Carbon::parse($token->expires_at) < now()) {
             return response()->json(["message" => "Token expired"], Response::HTTP_UNAUTHORIZED);
@@ -55,6 +60,7 @@ class Protector
             return response()->json(["message" => "You don't have enough permissions"], Response::HTTP_FORBIDDEN);
         }
         
+        Auth::setUser($token->user);
 
         return $next($request);
     }
