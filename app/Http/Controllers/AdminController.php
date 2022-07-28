@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\LoginAdminRequest;
 use App\Services\AdminUserService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -29,6 +30,13 @@ class AdminController extends Controller
     }
     public function logout()
     {
+        try {
+            $this->adminUserService->logoutUser(Auth::user());
+
+            return response()->json(["message" => "Logged out successfully"]);
+        } catch (Exception $e) {
+            return response()->json(["message" => $e->getMessage()], $e->getCode());
+        }
     }
 
     public function listUsers()

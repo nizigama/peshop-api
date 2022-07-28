@@ -82,4 +82,9 @@ class AdminUserService
 			throw new Exception("Failed to login admin user", 500);
 		}
 	}
+
+	public function logoutUser(User $user): bool{
+
+		return boolval($user->tokens()->delete());
+	}
 }
