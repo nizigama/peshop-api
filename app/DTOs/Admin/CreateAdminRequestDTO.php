@@ -16,7 +16,7 @@ class CreateAdminRequestDTO extends BaseDTO
 	public string $avatar;
 	public string $address;
 	public string $phone_number;
-	public bool $marketing;
+	public ?bool $marketing = null;
 
 	public function __construct(array $requestData)
 	{

@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'avatar' => File::factory()->create()->uuid,
             'address' => fake()->address,
             'phone_number' => fake()->phoneNumber,
+            'is_marketing' => fake()->boolean(),
             'last_login_at' => fake()->dateTime
         ];
     }
