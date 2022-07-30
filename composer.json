@@ -11,7 +11,8 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
-        "lcobucci/jwt": "^4.1"
+        "lcobucci/jwt": "^4.1",
+        "squizlabs/php_codesniffer": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.12",
