@@ -77,7 +77,11 @@ class AdminUserService
 		}
 
 		try {
-			return $this->authTokenService->createUserToken($user);
+			$token = $this->authTokenService->createUserToken($user);
+			$user->last_login_at = now();
+			$user->save();
+
+			return $token;
 		} catch (\Exception $e) {
 
 			Log::error("PEST-SHOP-API::error", [
@@ -138,6 +142,5 @@ class AdminUserService
 			->when($dto->marketing, function (Builder $query) use ($dto) {
 				$query->where('is_marketing', $dto->marketing);
 			});
-		
 	}
 }

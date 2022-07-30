@@ -7,7 +7,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Admin\CreateAdminRequest;
 use App\Http\Requests\Admin\ListUsersRequest;
 use App\Http\Requests\Admin\LoginAdminRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Services\AdminUserService;
+use App\Services\NormalUserService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 class AdminController extends Controller
 {
 
-    public function __construct(protected AdminUserService $adminUserService)
+    public function __construct(protected AdminUserService $adminUserService, protected NormalUserService $normalUserService)
     {
         $this->middleware('protector:admin')->except(['login', 'store']);
     }
@@ -73,9 +75,19 @@ class AdminController extends Controller
         }
     }
 
-    public function update()
+    public function update(UpdateUserRequest $request, string $uuid)
     {
+        try {
+            $this->normalUserService->updateUser($request->dto, $uuid);
+
+            return response()->json(["message" => "Normal user updated successfully"]);
+        } catch (Exception $e) {
+            // dd($e->getCode());
+            return response()->json(["message" => $e->getMessage()], 500);
+        }
     }
+
+
     public function destroy()
     {
     }
