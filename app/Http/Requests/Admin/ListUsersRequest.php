@@ -33,7 +33,7 @@ class ListUsersRequest extends FormRequest
             "page" => ["nullable", "numeric"],
             "limit" => ["nullable", "numeric"],
             "sortBy" => ["nullable", "string"],
-            "desc" => ["nullable", "boolean"],
+            "desc" => ["nullable", "in:true,false"],
             "first_name" => ["nullable", "string"],
             "email" => ["nullable", "email"],
             "phone" => ["nullable", "string"],
@@ -65,13 +65,17 @@ class ListUsersRequest extends FormRequest
     {
         $validated = (array)$this->validated();
 
-        array_walk($validated, function (&$value) {
+        array_walk($validated, function (&$value, $key) {
             if (is_numeric($value)) {
                 $value = intval($value);
             }
 
             if (in_array($value, ["true", "false"])) {
                 $value = $value === "true" ? true : false;
+            }
+
+            if($key === "marketing"){
+                $value = boolval($value);
             }
         });
 

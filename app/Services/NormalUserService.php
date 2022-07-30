@@ -38,6 +38,12 @@ class NormalUserService
             throw new Exception("Avatar not found", 404);
         }
 
+        $userWithGivenEmail = User::where([["email", $dto->email],["uuid","!=",$userUuid]])->exists();
+
+        if($userWithGivenEmail){
+            throw new Exception("Email is already taken", 403);
+        }
+
         try {
             $user->first_name = $dto->first_name;
             $user->last_name = $dto->last_name;
@@ -47,6 +53,7 @@ class NormalUserService
             $user->address = $dto->address;
             $user->phone_number = $dto->phone_number;
             $user->is_marketing = $dto->marketing ?? false;
+            return $user->save();
         } catch (\Exception $e) {
             Log::error("PEST-SHOP-API::error", [
                 "message" => "Failed to update normal user in the NormalUserService",
@@ -56,7 +63,6 @@ class NormalUserService
             throw new Exception("Failed to update the user", 500);
         }
 
-        return $user->save();
     }
 
     /**

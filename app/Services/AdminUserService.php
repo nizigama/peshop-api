@@ -121,6 +121,7 @@ class AdminUserService
 		}
 
 		return DB::table('users')
+			->where('is_admin', false)
 			->orderBy($dto->sortBy, $dto->desc ? 'DESC' : 'ASC')
 			->when(!is_null($dto->first_name), function (Builder $query) use ($dto) {
 				$query->where('first_name', $dto->first_name);
