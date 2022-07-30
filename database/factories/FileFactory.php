@@ -14,16 +14,16 @@ class FileFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         $uuid = $this->faker->unique()->uuid;
         $extension = $this->faker->randomElement(["png","jpg","jpeg"]);
         return [
-            "uuid" => $uuid, 
-            "name" => $this->faker->name, 
-            "path" => storage_path("app/public/$uuid.$extension"),
-            "size" => $this->faker->numberBetween(10,100) . " KB",
-            "type" => "$extension"
+            "uuid" => $uuid,
+            "name" => $this->faker->name,
+            "path" => storage_path("app/public/{$uuid}.{$extension}"),
+            "size" => $this->faker->numberBetween(10, 100) . " KB",
+            "type" => "{$extension}",
         ];
     }
 }

@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Admin\CreateAdminRequest;
-use App\Http\Requests\Admin\ListUsersRequest;
-use App\Http\Requests\Admin\LoginAdminRequest;
-use App\Http\Requests\User\UpdateUserRequest;
+use Exception;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use App\Services\AdminUserService;
 use App\Services\NormalUserService;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Admin\ListUsersRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Requests\Admin\LoginAdminRequest;
+use App\Http\Requests\Admin\CreateAdminRequest;
 
 class AdminController extends Controller
 {
-
     public function __construct(protected AdminUserService $adminUserService, protected NormalUserService $normalUserService)
     {
         $this->middleware('protector:admin')->except(['login', 'store']);
@@ -88,7 +86,6 @@ class AdminController extends Controller
             return response()->json(["message" => $e->getMessage()], $e->getCode());
         }
     }
-
 
     /**
      *  @OA\Get(
@@ -460,7 +457,7 @@ class AdminController extends Controller
                 'address',
                 'phone_number',
                 'created_at',
-                'last_login_at'
+                'last_login_at',
             ], 'page', $request->dto->page);
 
             return response()->json($users);
@@ -532,7 +529,6 @@ class AdminController extends Controller
             return response()->json(["message" => $e->getMessage()], $e->getCode());
         }
     }
-
 
     /**
      * @OA\Put(

@@ -1,28 +1,26 @@
 <?php
 
 use App\Models\File;
-use App\Models\JWT_Token;
 use App\Models\User;
-use App\Services\AuthTokenService;
+use App\Models\JWT_Token;
 use Database\Seeders\FileSeeder;
+use App\Services\AuthTokenService;
 use Illuminate\Support\Facades\Hash;
-
+use function Pest\Laravel\get;
+use function Pest\Laravel\put;
+use function Pest\Laravel\delete;
+use function Pest\Laravel\postJson;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Laravel\delete;
-use function Pest\Laravel\get;
-use function Pest\Laravel\postJson;
-use function Pest\Laravel\put;
 
-beforeEach(function () {
-
+beforeEach(function (): void {
     $this->authTokenService = new AuthTokenService();
     $this->seed([
-        FileSeeder::class
+        FileSeeder::class,
     ]);
 });
 
-it('can create a new admin user', function () {
+it('can create a new admin user', function (): void {
     $requestData = [
         "first_name" => "aaaa",
         "last_name" => "aaaa",
@@ -31,7 +29,7 @@ it('can create a new admin user', function () {
         "password_confirmation" => "password",
         "avatar" => File::inRandomOrder()->first()->uuid,
         "address" => "rerreer",
-        "phone_number" => "rreere"
+        "phone_number" => "rreere",
     ];
     $response = $this->post('/api/v1/admin/create', $requestData);
 
@@ -47,10 +45,10 @@ it('can create a new admin user', function () {
     assertDatabaseHas((new User())->getTable(), $requestData);
 });
 
-it('can\'t create a new admin user with same email as an existing user', function () {
+it('can\'t create a new admin user with same email as an existing user', function (): void {
     $email = "admin3@gmail.com";
     User::factory()->create([
-        "email" => $email
+        "email" => $email,
     ]);
     $requestData = [
         "first_name" => "aaaa",
@@ -60,7 +58,7 @@ it('can\'t create a new admin user with same email as an existing user', functio
         "password_confirmation" => "password",
         "avatar" => File::inRandomOrder()->first()->uuid,
         "address" => "rerreer",
-        "phone_number" => "rreere"
+        "phone_number" => "rreere",
     ];
     $response = $this->post('/api/v1/admin/create', $requestData);
 
@@ -72,18 +70,17 @@ it('can\'t create a new admin user with same email as an existing user', functio
     assertDatabaseMissing((new User())->getTable(), $requestData);
 });
 
-it('can login as admin user', function () {
-
+it('can login as admin user', function (): void {
     $email = "admin3@gmail.com";
     User::factory()->create([
         "email" => $email,
         "password" => Hash::make("password"),
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $requestData = [
         "email" => $email,
-        "password" => "password"
+        "password" => "password",
     ];
 
     $response = postJson('/api/v1/admin/login', $requestData);
@@ -92,7 +89,7 @@ it('can login as admin user', function () {
 
     $response->assertJsonStructure([
         "message",
-        "token"
+        "token",
     ]);
 
     expect($response->json()["message"])->toBe("Login successful");
@@ -103,18 +100,17 @@ it('can login as admin user', function () {
     $response2->assertStatus(200);
 });
 
-it('can\'t login as admin user with wrong credentials', function () {
-
+it('can\'t login as admin user with wrong credentials', function (): void {
     $email = "admin3@gmail.com";
     User::factory()->create([
         "email" => $email,
         "password" => Hash::make("password"),
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $requestData = [
         "email" => $email,
-        "password" => "123456"
+        "password" => "123456",
     ];
 
     $response = postJson('/api/v1/admin/login', $requestData);
@@ -122,14 +118,13 @@ it('can\'t login as admin user with wrong credentials', function () {
     $response->assertStatus(405);
 
     $response->assertJsonStructure([
-        "message"
+        "message",
     ]);
 
     expect($response->json()["message"])->toBe("Wrong password");
 });
 
-
-it('can\'t access protected endpoints with wrong token', function () {
+it('can\'t access protected endpoints with wrong token', function (): void {
 
     // test token with protected endpoint
     $response2 = get('/api/v1/admin/user-listing', ["Authorization" => "Bearer xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]);
@@ -137,44 +132,41 @@ it('can\'t access protected endpoints with wrong token', function () {
     $response2->assertStatus(401);
 });
 
-it('can logout', function () {
-
+it('can logout', function (): void {
     $user = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $token = $this->authTokenService->createUserToken($user);
 
     // test token with protected endpoint
-    $response2 = get('/api/v1/admin/logout', ["Authorization" => "Bearer $token"]);
+    $response2 = get('/api/v1/admin/logout', ["Authorization" => "Bearer {$token}"]);
 
     $response2->assertStatus(200);
 
     assertDatabaseMissing((new JWT_Token())->getTable(), [
-        "user_id" => $user->id
+        "user_id" => $user->id,
     ]);
 
     // test token with protected endpoint
-    $response2 = get('/api/v1/admin/user-listing', ["Authorization" => "Bearer $token"]);
+    $response2 = get('/api/v1/admin/user-listing', ["Authorization" => "Bearer {$token}"]);
 
     $response2->assertStatus(401);
 });
 
-
-it('can list normal users with pagination', function () {
-
+it('can list normal users with pagination', function (): void {
     $user = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     User::factory(20)->create([
-        "is_admin" => false
+        "is_admin" => false,
     ]);
 
     $token = $this->authTokenService->createUserToken($user);
 
     // test token with protected endpoint
-    $response = get('/api/v1/admin/user-listing', ["Authorization" => "Bearer $token"]);
+    $response = get('/api/v1/admin/user-listing', ["Authorization" => "Bearer {$token}"]);
 
     $response->assertStatus(200);
 
@@ -191,9 +183,9 @@ it('can list normal users with pagination', function () {
                 "address",
                 "phone_number",
                 "created_at",
-                "last_login_at"
+                "last_login_at",
 
-            ]
+            ],
         ],
         "first_page_url",
         "from",
@@ -203,15 +195,15 @@ it('can list normal users with pagination', function () {
             [
                 "url",
                 "label",
-                "active"
-            ]
+                "active",
+            ],
         ],
         "next_page_url",
         "path",
         "per_page",
         "prev_page_url",
         "to",
-        "total"
+        "total",
     ]);
 
     expect($response->json())
@@ -225,17 +217,16 @@ it('can list normal users with pagination', function () {
         ->total->toBeNumeric();
 });
 
-it('can update a normal user', function () {
-
+it('can update a normal user', function (): void {
     $user = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $token = $this->authTokenService->createUserToken($user);
 
     $email = "admin3@gmail.com";
     $userToUpdate = User::factory()->create([
-        "is_admin" => false
+        "is_admin" => false,
     ]);
 
     $requestData = [
@@ -246,9 +237,9 @@ it('can update a normal user', function () {
         "password_confirmation" => "123456",
         "avatar" => File::inRandomOrder()->first()->uuid,
         "address" => "rerreer",
-        "phone_number" => "rreere"
+        "phone_number" => "rreere",
     ];
-    $response = put("/api/v1/admin/user-edit/$userToUpdate->uuid", $requestData, ["Authorization" => "Bearer $token"]);
+    $response = put("/api/v1/admin/user-edit/{$userToUpdate->uuid}", $requestData, ["Authorization" => "Bearer {$token}"]);
 
     $response->assertStatus(200);
 
@@ -262,17 +253,16 @@ it('can update a normal user', function () {
     assertDatabaseHas((new User())->getTable(), $requestData);
 });
 
-it('can\'t update an admin user', function () {
-
+it('can\'t update an admin user', function (): void {
     $user = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $token = $this->authTokenService->createUserToken($user);
 
     $email = "admin3@gmail.com";
     $userToUpdate = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $requestData = [
@@ -283,9 +273,9 @@ it('can\'t update an admin user', function () {
         "password_confirmation" => "123456",
         "avatar" => File::inRandomOrder()->first()->uuid,
         "address" => "rerreer",
-        "phone_number" => "rreere"
+        "phone_number" => "rreere",
     ];
-    $response = put("/api/v1/admin/user-edit/$userToUpdate->uuid", $requestData, ["Authorization" => "Bearer $token"]);
+    $response = put("/api/v1/admin/user-edit/{$userToUpdate->uuid}", $requestData, ["Authorization" => "Bearer {$token}"]);
 
     $response->assertStatus(403);
 
@@ -299,20 +289,18 @@ it('can\'t update an admin user', function () {
     assertDatabaseMissing((new User())->getTable(), $requestData);
 });
 
-
-it('can delete a normal user', function () {
-
+it('can delete a normal user', function (): void {
     $user = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $token = $this->authTokenService->createUserToken($user);
 
     $userToDelete = User::factory()->create([
-        "is_admin" => false
+        "is_admin" => false,
     ]);
 
-    $response = delete("/api/v1/admin/user-delete/$userToDelete->uuid", [], ["Authorization" => "Bearer $token"]);
+    $response = delete("/api/v1/admin/user-delete/{$userToDelete->uuid}", [], ["Authorization" => "Bearer {$token}"]);
 
     $response->assertStatus(200);
 
@@ -321,23 +309,22 @@ it('can delete a normal user', function () {
         ->message->toBe('Normal user deleted successfully');
 
     assertDatabaseMissing((new User())->getTable(), [
-        "id" => $userToDelete->id
+        "id" => $userToDelete->id,
     ]);
 });
 
-it('can\'t delete an admin user', function () {
-
+it('can\'t delete an admin user', function (): void {
     $user = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $token = $this->authTokenService->createUserToken($user);
 
     $userToDelete = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
-    $response = delete("/api/v1/admin/user-delete/$userToDelete->uuid", [], ["Authorization" => "Bearer $token"]);
+    $response = delete("/api/v1/admin/user-delete/{$userToDelete->uuid}", [], ["Authorization" => "Bearer {$token}"]);
 
     $response->assertStatus(403);
 
@@ -346,6 +333,6 @@ it('can\'t delete an admin user', function () {
         ->message->toBe('Admin users can\'t be deleted');
 
     assertDatabaseHas((new User())->getTable(), [
-        "id" => $userToDelete->id
+        "id" => $userToDelete->id,
     ]);
 });

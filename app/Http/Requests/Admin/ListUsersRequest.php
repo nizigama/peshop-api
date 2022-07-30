@@ -2,22 +2,19 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\DTOs\Admin\ListUsersRequestDTO;
-use App\DTOs\Admin\LoginAdminRequestDTO;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
+use App\DTOs\Admin\ListUsersRequestDTO;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ListUsersRequest extends FormRequest
 {
     public ListUsersRequestDTO $dto;
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -27,7 +24,7 @@ class ListUsersRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             "page" => ["nullable", "numeric"],
@@ -43,7 +40,6 @@ class ListUsersRequest extends FormRequest
         ];
     }
 
-
     /**
      * Handle a failed validation attempt.
      *
@@ -52,20 +48,23 @@ class ListUsersRequest extends FormRequest
     protected function failedValidation(Validator $validator): void
     {
         if ($validator->fails()) {
-            throw new HttpResponseException(response()->json($validator->errors()->all(), Response::HTTP_UNPROCESSABLE_ENTITY));
+            throw new HttpResponseException(
+                response()->json(
+                    $validator->errors()->all(),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                )
+            );
         }
     }
 
-
     /**
      * Handle a passed validation attempt.
-     *
      */
     protected function passedValidation(): void
     {
-        $validated = (array)$this->validated();
+        $validated = (array) $this->validated();
 
-        array_walk($validated, function (&$value, $key) {
+        array_walk($validated, function (&$value, $key): void {
             if (is_numeric($value)) {
                 $value = intval($value);
             }
@@ -74,7 +73,7 @@ class ListUsersRequest extends FormRequest
                 $value = $value === "true" ? true : false;
             }
 
-            if($key === "marketing"){
+            if ($key === "marketing") {
                 $value = boolval($value);
             }
         });

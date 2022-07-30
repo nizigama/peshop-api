@@ -8,9 +8,8 @@ use App\Models\File;
 
 class FileService
 {
-
-	public function avatarExists(string $uuid): bool
-	{
-		return File::where("uuid", $uuid)->exists();
-	}
+    public function avatarExists(string $uuid): bool
+    {
+        return File::where("uuid", $uuid)->exists();
+    }
 }

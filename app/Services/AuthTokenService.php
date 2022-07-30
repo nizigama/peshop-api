@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\JWT_Token;
 use App\Models\User;
-use Illuminate\Support\Facades\Config;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Token;
+use Ramsey\Uuid\Uuid;
+use App\Models\JWT_Token;
 use Lcobucci\JWT\Token\Plain;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Illuminate\Support\Facades\Config;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
-use Ramsey\Uuid\Uuid;
 
 class AuthTokenService
 {
@@ -44,7 +43,8 @@ class AuthTokenService
         $tokenIdentifier = Uuid::uuid4()->toString();
         $issuer = Config::get("app.key");
         $issueTime = now()->toDateTimeImmutable();
-        $expireTime = now()->addMinutes(Config::get('protector.jwt_expires_after_minutes'))->toDateTimeImmutable();
+        $expireTime = now()->addMinutes(Config::get('protector.jwt_expires_after_minutes'))
+            ->toDateTimeImmutable();
 
         $token = $this->configuration->builder()
             // Configures the issuer (iss claim)
@@ -66,7 +66,7 @@ class AuthTokenService
             "unique_id" => $tokenIdentifier,
             "user_id" => $user->id,
             "token_title" => "ADMIN LOGIN TOKEN",
-            "expires_at" => $expireTime
+            "expires_at" => $expireTime,
         ]);
 
         return $token->toString();
@@ -74,27 +74,28 @@ class AuthTokenService
 
     public function isTokenValid(string $token): bool|Plain
     {
-
         try {
             $token = $this->configuration->parser()->parse($token);
 
-        if (!($token instanceof Plain)) {
-            return false;
-        }
+            if (!($token instanceof Plain)) {
+                return false;
+            }
 
-        $this->configuration->setValidationConstraints(new IssuedBy(Config::get("app.key")), new PermittedFor(Config::get("app.url")));
+            $this->configuration->setValidationConstraints(
+                new IssuedBy(Config::get("app.key")),
+                new PermittedFor(Config::get("app.url"))
+            );
 
-        $constraints = $this->configuration->validationConstraints();
+            $constraints = $this->configuration->validationConstraints();
 
-        if (! $this->configuration->validator()->validate($token, ...$constraints)) {
-           return false;
-        }
-        
-        return $token;
+            if (!$this->configuration->validator()->validate($token, ...$constraints)) {
+                return false;
+            }
+
+            return $token;
         } catch (\Throwable $th) {
             // invalid token
             return false;
         }
-        
     }
 }

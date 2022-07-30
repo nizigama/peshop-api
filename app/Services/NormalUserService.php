@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\DTOs\User\UpdateUserRequestDTO;
-use App\Models\JWT_Token;
-use App\Models\User;
 use Exception;
+use App\Models\User;
+use App\Models\JWT_Token;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use App\DTOs\User\UpdateUserRequestDTO;
 
 class NormalUserService
 {
-
     public function __construct(protected FileService $fileService, protected AuthTokenService $authTokenService)
     {
     }
@@ -38,9 +37,9 @@ class NormalUserService
             throw new Exception("Avatar not found", 404);
         }
 
-        $userWithGivenEmail = User::where([["email", $dto->email],["uuid","!=",$userUuid]])->exists();
+        $userWithGivenEmail = User::where([["email", $dto->email], ["uuid", "!=", $userUuid]])->exists();
 
-        if($userWithGivenEmail){
+        if ($userWithGivenEmail) {
             throw new Exception("Email is already taken", 403);
         }
 
@@ -58,11 +57,10 @@ class NormalUserService
             Log::error("PEST-SHOP-API::error", [
                 "message" => "Failed to update normal user in the NormalUserService",
                 "dto" => $dto,
-                "exception" => $e
+                "exception" => $e,
             ]);
             throw new Exception("Failed to update the user", 500);
         }
-
     }
 
     /**
@@ -81,8 +79,7 @@ class NormalUserService
         }
 
         try {
-            DB::transaction(function () use ($user) {
-
+            DB::transaction(function () use ($user): void {
                 JWT_Token::where("user_id", $user->id)->delete();
                 $user->delete();
             });
@@ -90,7 +87,7 @@ class NormalUserService
             Log::error("PEST-SHOP-API::error", [
                 "message" => "Failed to delete normal user in the NormalUserService class",
                 "userUuid" => $uuid,
-                "exception" => $e
+                "exception" => $e,
             ]);
             throw new Exception("Failed to delete the user", 500);
         }

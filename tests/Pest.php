@@ -13,7 +13,7 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(Tests\TestCase::class, RefreshDatabase::class)->in('Feature','Unit');
+uses(Tests\TestCase::class, RefreshDatabase::class)->in('Feature', 'Unit');
 /*
 |--------------------------------------------------------------------------
 | Expectations
@@ -40,7 +40,7 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function something(): void
 {
     // ..
 }

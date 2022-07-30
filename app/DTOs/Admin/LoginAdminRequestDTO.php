@@ -8,12 +8,6 @@ use App\DTOs\BaseDTO;
 
 class LoginAdminRequestDTO extends BaseDTO
 {
-
-	public string $email;
-	public string $password;
-
-	public function __construct(array $requestData)
-	{
-		parent::__construct($requestData);
-	}
+    public string $email;
+    public string $password;
 }

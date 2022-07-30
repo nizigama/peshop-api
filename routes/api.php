@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,10 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix("v1")->group(function () {
-
-    Route::prefix("admin")->group(function () {
-
+Route::prefix("v1")->group(function (): void {
+    Route::prefix("admin")->group(function (): void {
         Route::post("create", [AdminController::class, "store"]);
         Route::post("login", [AdminController::class, "login"]);
         Route::get("logout", [AdminController::class, "logout"]);

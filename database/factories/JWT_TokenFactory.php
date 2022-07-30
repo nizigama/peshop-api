@@ -15,17 +15,17 @@ class JWT_TokenFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            "unique_id" =>fake()->unique()->uuid, 
-            "user_id" => User::factory()->create()->id, 
-            "token_title" => fake()->title, 
-            "restrictions" => fake()->text, 
-            "permissions" => fake()->text, 
-            "expires_at" => fake()->dateTime, 
-            "last_used_at" => fake()->randomElement([null, fake()->dateTime]), 
-            "refreshed_at" => fake()->randomElement([null, fake()->dateTime])
+            "unique_id" => fake()->unique()->uuid,
+            "user_id" => User::factory()->create()->id,
+            "token_title" => fake()->title,
+            "restrictions" => fake()->text,
+            "permissions" => fake()->text,
+            "expires_at" => fake()->dateTime,
+            "last_used_at" => fake()->randomElement([null, fake()->dateTime]),
+            "refreshed_at" => fake()->randomElement([null, fake()->dateTime]),
         ];
     }
 }

@@ -1,12 +1,10 @@
 <?php
 
-use App\Http\Requests\User\UpdateUserRequest;
-use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-
+use App\Http\Requests\User\UpdateUserRequest;
 use function Pest\Faker\faker;
 
-it('that the request to update a normal user is validated properly', function (string $field, ?string $value, array $dependingFields, bool $shouldFail) {
+it('that the request to update a normal user is validated properly', function (string $field, ?string $value, array $dependingFields, bool $shouldFail): void {
     $rules = (new UpdateUserRequest())->rules();
 
     $validator = Validator::make(

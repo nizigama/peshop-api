@@ -1,21 +1,19 @@
 <?php
 
-use App\DTOs\User\UpdateUserRequestDTO;
 use App\Models\File;
-use App\Models\JWT_Token;
 use App\Models\User;
-use App\Services\AuthTokenService;
+use App\Models\JWT_Token;
 use App\Services\FileService;
-use App\Services\NormalUserService;
 use Database\Seeders\FileSeeder;
-
+use App\Services\AuthTokenService;
+use App\Services\NormalUserService;
+use App\DTOs\User\UpdateUserRequestDTO;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
-beforeEach(function () {
-
+beforeEach(function (): void {
     $this->seed([
-        FileSeeder::class
+        FileSeeder::class,
     ]);
 
     $authTokenService = new AuthTokenService();
@@ -24,10 +22,9 @@ beforeEach(function () {
     $this->normalUserService = new NormalUserService($fileService, $authTokenService);
 });
 
-it('that the service in charge of updating a normal user works properly', function () {
-
+it('that the service in charge of updating a normal user works properly', function (): void {
     $user = User::factory()->create([
-        "is_admin" => false
+        "is_admin" => false,
     ]);
 
     $requestData = [
@@ -38,12 +35,12 @@ it('that the service in charge of updating a normal user works properly', functi
         "avatar" => File::inRandomOrder()->first()->uuid,
         "address" => "rerreer",
         "phone_number" => "rreere",
-        "marketing" => true
+        "marketing" => true,
     ];
 
     $dto = new UpdateUserRequestDTO($requestData);
 
-    expect(function () use ($dto, $user) {
+    expect(function () use ($dto, $user): void {
         $this->normalUserService->updateUser($dto, $user->uuid);
     })->not->toThrow(Exception::class)
         ->and($user->fresh())
@@ -55,10 +52,9 @@ it('that the service in charge of updating a normal user works properly', functi
         ->is_marketing->toBe(intval($dto->marketing));
 });
 
-it('that the service in charge of updating a user can\'t update an admin user', function () {
-
+it('that the service in charge of updating a user can\'t update an admin user', function (): void {
     $user = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $requestData = [
@@ -69,12 +65,12 @@ it('that the service in charge of updating a user can\'t update an admin user', 
         "avatar" => File::inRandomOrder()->first()->uuid,
         "address" => "rerreer",
         "phone_number" => "rreere",
-        "marketing" => true
+        "marketing" => true,
     ];
 
     $dto = new UpdateUserRequestDTO($requestData);
 
-    expect(function () use ($dto, $user) {
+    expect(function () use ($dto, $user): void {
         $this->normalUserService->updateUser($dto, $user->uuid);
     })->toThrow(Exception::class, "Admin users can't be edited")
         ->and($user->fresh())
@@ -86,38 +82,36 @@ it('that the service in charge of updating a user can\'t update an admin user', 
         ->is_marketing->toBe(intval($user->is_marketing));
 });
 
-it('that the normal user service can delete a user with their relationships', function () {
-
+it('that the normal user service can delete a user with their relationships', function (): void {
     $user = User::factory()->create([
-        "is_admin" => false
+        "is_admin" => false,
     ]);
 
-    expect(function () use ($user) {
+    expect(function () use ($user): void {
         $this->normalUserService->deleteUser($user->uuid);
     })->not->toThrow(Exception::class)
         ->and($user->fresh())->toBeNull();
 
     assertDatabaseMissing((new JWT_Token())->getTable(), [
-        "user_id" => $user->id
+        "user_id" => $user->id,
     ]);
 
     assertDatabaseMissing((new User())->getTable(), [
-        "id" => $user->id
+        "id" => $user->id,
     ]);
 });
 
-it('that the normal user service can\'t delete an admin user', function () {
-
+it('that the normal user service can\'t delete an admin user', function (): void {
     $user = User::factory()->create([
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
-    expect(function () use ($user) {
+    expect(function () use ($user): void {
         $this->normalUserService->deleteUser($user->uuid);
     })->toThrow(Exception::class, "Admin users can't be deleted")
         ->and($user->fresh())->not->toBeNull();
 
     assertDatabaseHas((new User())->getTable(), [
-        "id" => $user->id
+        "id" => $user->id,
     ]);
 });

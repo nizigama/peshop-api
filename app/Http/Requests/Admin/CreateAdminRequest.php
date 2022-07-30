@@ -2,21 +2,19 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\DTOs\Admin\CreateAdminRequestDTO;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
+use App\DTOs\Admin\CreateAdminRequestDTO;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CreateAdminRequest extends FormRequest
 {
     public CreateAdminRequestDTO $dto;
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -26,17 +24,17 @@ class CreateAdminRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'first_name' => ["required", "string"],
             'last_name' => ["required", "string"],
-            'email' => ["required", "email:rfc,dns","unique:users"],
+            'email' => ["required", "email:rfc,dns", "unique:users"],
             'password' => ["required", "string", "min:6", "confirmed"],
             'avatar' => ["required", "string"],
             'address' => ["required", "string"],
             'phone_number' => ["required", "string"],
-            "marketing" => ["nullable", "boolean"]
+            "marketing" => ["nullable", "boolean"],
         ];
     }
 
@@ -48,15 +46,17 @@ class CreateAdminRequest extends FormRequest
     protected function failedValidation(Validator $validator): void
     {
         if ($validator->fails()) {
-            throw new HttpResponseException(response()->json($validator->errors()->all(), Response::HTTP_UNPROCESSABLE_ENTITY));
+            throw new HttpResponseException(
+                response()->json(
+                    $validator->errors()->all(),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                )
+            );
         }
     }
 
-
-
     /**
      * Handle a passed validation attempt.
-     *
      */
     protected function passedValidation(): void
     {

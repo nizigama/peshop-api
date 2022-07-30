@@ -9,25 +9,21 @@ use ReflectionProperty;
 
 abstract class BaseDTO
 {
+    public function __construct(array $requestData)
+    {
+        foreach (array_keys($requestData) as $key) {
+            $this->$key = $requestData[$key];
+        }
 
-	public function __construct(array $requestData)
-	{
-		foreach (array_keys($requestData) as $key) {
-			$this->$key = $requestData[$key];
-		}
+        $obj = new ReflectionClass($this);
 
-		$obj = new ReflectionClass($this);
+        $properties = $obj->getProperties(ReflectionProperty::IS_PUBLIC);
 
-		$properties = $obj->getProperties(ReflectionProperty::IS_PUBLIC);
-
-
-		foreach ($properties as $property) {
-
-			if (!$property->isInitialized($this)) {
-				$name = $property->getName();
-				throw new \Exception("$name was not initialized");
-			}
-		}
-
-	}
+        foreach ($properties as $property) {
+            if (!$property->isInitialized($this)) {
+                $name = $property->getName();
+                throw new \Exception("{$name} was not initialized");
+            }
+        }
+    }
 }

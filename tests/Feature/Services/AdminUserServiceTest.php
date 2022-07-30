@@ -1,36 +1,32 @@
 <?php
 
-use App\DTOs\Admin\CreateAdminRequestDTO;
-use App\DTOs\Admin\ListUsersRequestDTO;
-use App\DTOs\Admin\LoginAdminRequestDTO;
-use App\Http\Requests\Admin\LoginAdminRequest;
 use App\Models\File;
-use App\Models\JWT_Token;
 use App\Models\User;
-use App\Services\AdminUserService;
-use App\Services\AuthTokenService;
+use App\Models\JWT_Token;
 use App\Services\FileService;
 use Database\Seeders\FileSeeder;
-use Illuminate\Database\Query\Builder;
+use App\Services\AdminUserService;
+use App\Services\AuthTokenService;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Database\Query\Builder;
+use App\DTOs\Admin\ListUsersRequestDTO;
+use App\DTOs\Admin\LoginAdminRequestDTO;
+use App\DTOs\Admin\CreateAdminRequestDTO;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
-beforeEach(function () {
-
+beforeEach(function (): void {
     $this->authTokenService = new AuthTokenService();
     $fileService = new FileService();
 
     $this->seed([
-        FileSeeder::class
+        FileSeeder::class,
     ]);
 
     $this->adminUserService = new AdminUserService($fileService, $this->authTokenService);
 });
 
-it('that the admin user service can create an admin user', function () {
-
+it('that the admin user service can create an admin user', function (): void {
     $avatar = File::InRandomOrder()->first()->uuid;
     $requestData = [
         "first_name" => "aaaa",
@@ -40,12 +36,12 @@ it('that the admin user service can create an admin user', function () {
         "password_confirmation" => "password",
         "avatar" => $avatar,
         "address" => "rerreer",
-        "phone_number" => "rreere"
+        "phone_number" => "rreere",
     ];
 
     $dto = new CreateAdminRequestDTO($requestData);
 
-    expect(function () use ($dto) {
+    expect(function () use ($dto): void {
         $this->adminUserService->createAdminUser($dto);
     })->not->toThrow(Exception::class);
 
@@ -56,14 +52,13 @@ it('that the admin user service can create an admin user', function () {
         "avatar" => $avatar,
         "address" => "rerreer",
         "phone_number" => "rreere",
-        "is_admin" => true
+        "is_admin" => true,
     ];
 
     assertDatabaseHas((new User())->getTable(), $userData);
 });
 
-it('that the admin user service throws an exception when an invalid avatar uuid is passed', function () {
-
+it('that the admin user service throws an exception when an invalid avatar uuid is passed', function (): void {
     $requestData = [
         "first_name" => "aaaa",
         "last_name" => "aaaa",
@@ -72,12 +67,12 @@ it('that the admin user service throws an exception when an invalid avatar uuid 
         "password_confirmation" => "password",
         "avatar" => 'wqo-4390-reoi-4390',
         "address" => "rerreer",
-        "phone_number" => "rreere"
+        "phone_number" => "rreere",
     ];
 
     $dto = new CreateAdminRequestDTO($requestData);
 
-    expect(function () use ($dto) {
+    expect(function () use ($dto): void {
         $this->adminUserService->createAdminUser($dto);
     })->toThrow(Exception::class, "Avatar not found");
 
@@ -88,28 +83,27 @@ it('that the admin user service throws an exception when an invalid avatar uuid 
         "avatar" => 'wqo-4390-reoi-4390',
         "address" => "rerreer",
         "phone_number" => "rreere",
-        "is_admin" => true
+        "is_admin" => true,
     ];
 
     assertDatabaseMissing((new User())->getTable(), $userData);
 });
 
-it('that the admin user service can create a valid token for admin user', function () {
-
+it('that the admin user service can create a valid token for admin user', function (): void {
     $user = User::factory()->create([
         "email" => "admin3@gmail.com",
         "password" => Hash::make("password"),
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $requestData = [
         "email" => "admin3@gmail.com",
-        "password" => "password"
+        "password" => "password",
     ];
 
     $dto = new LoginAdminRequestDTO($requestData);
 
-    expect(function () use ($dto) {
+    expect(function () use ($dto): void {
         $this->adminUserService->loginAdminUser($dto);
     })->not->toThrow(Exception::class);
 
@@ -122,27 +116,25 @@ it('that the admin user service can create a valid token for admin user', functi
 
     assertDatabaseHas((new JWT_Token())->getTable(), [
         "user_id" => $user->id,
-        "token_title" => "ADMIN LOGIN TOKEN"
+        "token_title" => "ADMIN LOGIN TOKEN",
     ]);
 
     assertDatabaseMissing((new User())->getTable(), [
         'uuid' => $user->uuid,
-        'last_login_at' => null
+        'last_login_at' => null,
     ]);
 });
 
-
-it('that the admin user service can delete an admin user token', function () {
-
+it('that the admin user service can delete an admin user token', function (): void {
     $user = User::factory()->create([
         "email" => "admin3@gmail.com",
         "password" => Hash::make("password"),
-        "is_admin" => true
+        "is_admin" => true,
     ]);
 
     $requestData = [
         "email" => "admin3@gmail.com",
-        "password" => "password"
+        "password" => "password",
     ];
 
     $dto = new LoginAdminRequestDTO($requestData);
@@ -153,46 +145,42 @@ it('that the admin user service can delete an admin user token', function () {
 
     assertDatabaseMissing((new JWT_Token())->getTable(), [
         "user_id" => $user->id,
-        "token_title" => "ADMIN LOGIN TOKEN"
+        "token_title" => "ADMIN LOGIN TOKEN",
     ]);
 });
 
-it('that the admin user service can list normal users with matching passed query', function (ListUsersRequestDTO $dto) {
-
-    expect(function() use($dto){
+it('that the admin user service can list normal users with matching passed query', function (ListUsersRequestDTO $dto): void {
+    expect(function () use ($dto): void {
         $this->adminUserService->listNormalUsers($dto);
     })->not->toThrow(Exception::class, "You are not allowed to sort by that value")
-    ->and($this->adminUserService->listNormalUsers($dto))
-    ->toBeInstanceOf(Builder::class)
-    ->first()->email->toBe($dto->email);
-
+        ->and($this->adminUserService->listNormalUsers($dto))
+        ->toBeInstanceOf(Builder::class)
+        ->first()->email->toBe($dto->email);
 })->with([
     function () {
         User::factory(30)->create([
-            "is_admin" => false
+            "is_admin" => false,
         ]);
 
         $randomUser = User::inRandomOrder()->first();
 
         return new ListUsersRequestDTO([
-            'first_name'=>$randomUser->first_name,
-            'last_name'=>$randomUser->last_name,
-            'email'=>$randomUser->email,
-            'avatar'=>$randomUser->avatar,
-            'address'=>$randomUser->address,
-            'phone_number'=>$randomUser->phone_number
+            'first_name' => $randomUser->first_name,
+            'last_name' => $randomUser->last_name,
+            'email' => $randomUser->email,
+            'avatar' => $randomUser->avatar,
+            'address' => $randomUser->address,
+            'phone_number' => $randomUser->phone_number,
         ]);
-    }
+    },
 ]);
 
-it('that the admin user service throws exception when invalid value is passed as sort by query parameter', function () {
-
+it('that the admin user service throws exception when invalid value is passed as sort by query parameter', function (): void {
     $dto = new ListUsersRequestDTO([
-        'sortBy'=>'random'
+        'sortBy' => 'random',
     ]);
-    
-    expect(function() use($dto){
+
+    expect(function () use ($dto): void {
         $this->adminUserService->listNormalUsers($dto);
     })->toThrow(Exception::class, "You are not allowed to sort by that value");
-
 });

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Http\Requests\Admin\CreateAdminRequest;
-use App\Http\Requests\Admin\ListUsersRequest;
-use App\Http\Requests\Admin\LoginAdminRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Admin\ListUsersRequest;
+use App\Http\Requests\Admin\LoginAdminRequest;
+use App\Http\Requests\Admin\CreateAdminRequest;
 use function Pest\Faker\faker;
 
-it('that the request to create an admin user is validated properly', function (string $field, ?string $value, array $dependingFields, bool $shouldFail) {
+it('that the request to create an admin user is validated properly', function (string $field, ?string $value, array $dependingFields, bool $shouldFail): void {
     $rules = (new CreateAdminRequest())->rules();
 
     $validator = Validator::make(
@@ -73,7 +73,7 @@ it('that the request to create an admin user is validated properly', function (s
         function () {
             $email = faker()->userName() . "@gmail.com";
             User::factory()->create([
-                "email" => $email
+                "email" => $email,
             ]);
             return $email;
         },
@@ -168,7 +168,7 @@ it('that the request to create an admin user is validated properly', function (s
     ],
 ]);
 
-it('that the request to list normal users is validated properly', function (string $field, ?string $value, array $dependingFields, bool $shouldFail) {
+it('that the request to list normal users is validated properly', function (string $field, ?string $value, array $dependingFields, bool $shouldFail): void {
     $rules = (new ListUsersRequest())->rules();
 
     $validator = Validator::make(
@@ -359,7 +359,7 @@ it('that the request to list normal users is validated properly', function (stri
     ],
 ]);
 
-it('that the request to login admin users is validated properly', function (string $field, ?string $value, array $dependingFields, bool $shouldFail) {
+it('that the request to login admin users is validated properly', function (string $field, ?string $value, array $dependingFields, bool $shouldFail): void {
     $rules = (new LoginAdminRequest())->rules();
 
     $validator = Validator::make(
@@ -402,7 +402,7 @@ it('that the request to login admin users is validated properly', function (stri
     [
         "password",
         function () {
-            return faker()->password(1,3);
+            return faker()->password(1, 3);
         },
         [],
         true,

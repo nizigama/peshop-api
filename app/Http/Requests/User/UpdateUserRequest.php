@@ -2,20 +2,18 @@
 
 namespace App\Http\Requests\User;
 
-use App\DTOs\User\UpdateUserRequestDTO;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
+use App\DTOs\User\UpdateUserRequestDTO;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -25,7 +23,7 @@ class UpdateUserRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'first_name' => ["required", "string"],
@@ -35,11 +33,11 @@ class UpdateUserRequest extends FormRequest
             'avatar' => ["required", "string"],
             'address' => ["required", "string"],
             'phone_number' => ["required", "string"],
-            'marketing' => ["nullable", "boolean"]
+            'marketing' => ["nullable", "boolean"],
         ];
     }
 
-        /**
+    /**
      * Handle a failed validation attempt.
      *
      * @throws HttpResponseException
@@ -47,15 +45,17 @@ class UpdateUserRequest extends FormRequest
     protected function failedValidation(Validator $validator): void
     {
         if ($validator->fails()) {
-            throw new HttpResponseException(response()->json($validator->errors()->all(), Response::HTTP_UNPROCESSABLE_ENTITY));
+            throw new HttpResponseException(
+                response()->json(
+                    $validator->errors()->all(),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                )
+            );
         }
     }
 
-
-
     /**
      * Handle a passed validation attempt.
-     *
      */
     protected function passedValidation(): void
     {

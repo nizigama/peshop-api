@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\File;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -16,7 +15,7 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'uuid' => fake()->unique()->uuid,
@@ -30,7 +29,7 @@ class UserFactory extends Factory
             'address' => fake()->address,
             'phone_number' => fake()->phoneNumber,
             'is_marketing' => fake()->boolean(),
-            'last_login_at' => fake()->dateTime
+            'last_login_at' => fake()->dateTime,
         ];
     }
 
@@ -39,7 +38,7 @@ class UserFactory extends Factory
      *
      * @return static
      */
-    public function unverified()
+    public function unverified(): static
     {
         return $this->state(function (array $attributes) {
             return [
