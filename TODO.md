@@ -8,4 +8,4 @@
 		- [x] Create DTOs, form requests, services and a controller for the admin endpoints
 		- [x] Add tests for form requests, services and controller for the admin endpoints
 		- [x] Add swagger and write documentation for the admin endpoints
-		- [ ] Add Laravel IDE Helper Generator, Larastan, PHP insights, PSR12
+		- [x] Add Laravel IDE Helper Generator, Larastan, PHP insights, PSR12

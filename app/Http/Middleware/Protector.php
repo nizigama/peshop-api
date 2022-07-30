@@ -23,7 +23,7 @@ class Protector
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): \Illuminate\Http\Response|JsonResponse|RedirectResponse
+    public function handle(Request $request, Closure $next, string $role): Response|JsonResponse|RedirectResponse
     {
         $supportedRoles = Config::get('protector.roles');
 

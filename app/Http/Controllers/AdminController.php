@@ -17,8 +17,10 @@ use App\Http\Requests\Admin\CreateAdminRequest;
 
 class AdminController extends Controller
 {
-    public function __construct(protected AdminUserService $adminUserService, protected NormalUserService $normalUserService)
-    {
+    public function __construct(
+        protected AdminUserService $adminUserService,
+        protected NormalUserService $normalUserService
+    ) {
         $this->middleware('protector:admin')->except(['login', 'store']);
     }
 
@@ -42,7 +44,8 @@ class AdminController extends Controller
      *    response=422,
      *    description="Missing request data or invalid request data",
      *      @OA\JsonContent(
-     *       type="string", example={"The email must be a valid email address.", "The password must be at least 6 characters."}
+     *       type="string",
+     * example={"The email must be a valid email address.", "The password must be at least 6 characters."}
      *    )
      *     ),
      * @OA\Response(
@@ -141,7 +144,8 @@ class AdminController extends Controller
      * tags={"users"},
      * security={ {"sanctum": {} }},
      * @OA\Parameter(
-     *    description="Sort by, allowed values: id,uuid,first_name,last_name,email,avatar,address,phone_number,created_at,last_login_at",
+     *    description="Sort by, allowed values: id,uuid,first_name,last_name,email,
+     * avatar,address,phone_number,created_at,last_login_at",
      *    in="query",
      *    name="sortBy",
      *    required=false,
@@ -493,7 +497,8 @@ class AdminController extends Controller
      *    response=422,
      *    description="Missing request data or invalid request data",
      *      @OA\JsonContent(
-     *       type="string", example={"The email must be a valid email address.", "The password must be at least 6 characters."}
+     *       type="string",
+     * example={"The email must be a valid email address.", "The password must be at least 6 characters."}
      *    )
      *     ),
      * @OA\Response(
@@ -568,7 +573,8 @@ class AdminController extends Controller
      *    response=422,
      *    description="Missing request data or invalid request data",
      *      @OA\JsonContent(
-     *       type="string", example={"The email must be a valid email address.", "The password must be at least 6 characters."}
+     *       type="string",
+     * example={"The email must be a valid email address.", "The password must be at least 6 characters."}
      *    )
      *     ),
      * @OA\Response(
