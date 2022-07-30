@@ -72,7 +72,7 @@ class AuthTokenService
         return $token->toString();
     }
 
-    public function isTokenValid(string $token): bool|Token|Plain
+    public function isTokenValid(string $token): bool|Plain
     {
 
         try {

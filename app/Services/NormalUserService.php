@@ -30,7 +30,7 @@ class NormalUserService
             throw new Exception("User not found", 404);
         }
 
-        if ($user->is_admin === 1) {
+        if ($user->is_admin) {
             throw new Exception("Admin users can't be edited", 403);
         }
 
@@ -68,7 +68,7 @@ class NormalUserService
     /**
      * @throws Exception
      */
-    public function deleteUser(string $uuid)
+    public function deleteUser(string $uuid): void
     {
         $user = User::where("uuid", $uuid)->first();
 
@@ -76,7 +76,7 @@ class NormalUserService
             throw new Exception("User not found", 404);
         }
 
-        if ($user->is_admin === 1) {
+        if ($user->is_admin) {
             throw new Exception("Admin users can't be deleted", 403);
         }
 

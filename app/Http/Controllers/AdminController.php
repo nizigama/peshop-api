@@ -8,9 +8,11 @@ use App\Http\Requests\Admin\CreateAdminRequest;
 use App\Http\Requests\Admin\ListUsersRequest;
 use App\Http\Requests\Admin\LoginAdminRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Models\User;
 use App\Services\AdminUserService;
 use App\Services\NormalUserService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,7 +78,7 @@ class AdminController extends Controller
      *     )
      * )
      */
-    public function login(LoginAdminRequest $request)
+    public function login(LoginAdminRequest $request): JsonResponse
     {
         try {
             $token = $this->adminUserService->loginAdminUser($request->dto);
@@ -120,10 +122,12 @@ class AdminController extends Controller
      * )
      * )
      */
-    public function logout()
+    public function logout(): JsonResponse
     {
         try {
-            $this->adminUserService->logoutUser(Auth::user());
+            /** @var User */
+            $user = Auth::user();
+            $this->adminUserService->logoutUser($user);
 
             return response()->json(["message" => "Logged out successfully"]);
         } catch (Exception $e) {
@@ -444,7 +448,7 @@ class AdminController extends Controller
      *     )
      * )
      */
-    public function listUsers(ListUsersRequest $request)
+    public function listUsers(ListUsersRequest $request): JsonResponse
     {
         try {
             $users = $this->adminUserService->listNormalUsers($request->dto)->paginate($request->dto->limit, [
@@ -518,7 +522,7 @@ class AdminController extends Controller
      *     )
      * )
      */
-    public function store(CreateAdminRequest $request)
+    public function store(CreateAdminRequest $request): JsonResponse
     {
         try {
             $this->adminUserService->createAdminUser($request->dto);
@@ -608,7 +612,7 @@ class AdminController extends Controller
      *     )
      * )
      */
-    public function update(UpdateUserRequest $request, string $uuid)
+    public function update(UpdateUserRequest $request, string $uuid): JsonResponse
     {
         try {
             $this->normalUserService->updateUser($request->dto, $uuid);
@@ -619,7 +623,7 @@ class AdminController extends Controller
         }
     }
 
-/**
+    /**
      * @OA\Delete(
      * path="/api/v1/admin/user-delete/{uuid}",
      * summary="Delete normal user",
@@ -674,7 +678,8 @@ class AdminController extends Controller
      *     )
      * )
      */
-    public function destroy(string $uuid)
+
+    public function destroy(string $uuid): JsonResponse
     {
         try {
             $this->normalUserService->deleteUser($uuid);

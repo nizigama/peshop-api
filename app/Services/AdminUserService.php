@@ -76,7 +76,7 @@ class AdminUserService
 
 		try {
 			$token = $this->authTokenService->createUserToken($user);
-			$user->last_login_at = now();
+			$user->last_login_at = now()->toString();
 			$user->save();
 
 			return $token;
