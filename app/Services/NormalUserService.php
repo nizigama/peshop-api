@@ -27,6 +27,9 @@ class NormalUserService
     {
     }
 
+    /**
+     * @throws Exception
+     */
     public function updateUser(UpdateUserRequestDTO $dto, string $userUuid): bool
     {
         $user = User::where("uuid", $userUuid)->first();
@@ -54,7 +57,7 @@ class NormalUserService
             $user->is_marketing = $dto->marketing ?? false;
         } catch (\Exception $e) {
             Log::error("PEST-SHOP-API::error", [
-                "message" => "Failed to update normal user in the NormalUserService class from AdminUserController",
+                "message" => "Failed to update normal user in the NormalUserService",
                 "dto" => $dto,
                 "exception" => $e
             ]);
@@ -62,5 +65,36 @@ class NormalUserService
         }
 
         return $user->save();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function deleteUser(string $uuid)
+    {
+        $user = User::where("uuid", $uuid)->first();
+
+        if (is_null($user)) {
+            throw new Exception("User not found", 404);
+        }
+
+        if ($user->is_admin === 1) {
+            throw new Exception("Admin users can't be deleted", 403);
+        }
+
+        /**
+         * @todo check if the user isn't linked to other resources
+         */
+
+        try {
+            $user->delete();
+        } catch (\Exception $e) {
+            Log::error("PEST-SHOP-API::error", [
+                "message" => "Failed to delete normal user in the NormalUserService class",
+                "userUuid" => $uuid,
+                "exception" => $e
+            ]);
+            throw new Exception("Failed to delete the user", 500);
+        }
     }
 }

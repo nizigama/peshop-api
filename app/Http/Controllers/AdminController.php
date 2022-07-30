@@ -82,13 +82,19 @@ class AdminController extends Controller
 
             return response()->json(["message" => "Normal user updated successfully"]);
         } catch (Exception $e) {
-            // dd($e->getCode());
-            return response()->json(["message" => $e->getMessage()], 500);
+            return response()->json(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
 
-    public function destroy()
+    public function destroy(string $uuid)
     {
+        try {
+            $this->normalUserService->deleteUser($uuid);
+
+            return response()->json(["message" => "Normal user deleted successfully"]);
+        } catch (Exception $e) {
+            return response()->json(["message" => $e->getMessage()], $e->getCode());
+        }
     }
 }
