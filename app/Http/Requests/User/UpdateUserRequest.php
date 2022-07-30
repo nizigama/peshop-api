@@ -30,12 +30,12 @@ class UpdateUserRequest extends FormRequest
         return [
             'first_name' => ["required", "string"],
             'last_name' => ["required", "string"],
-            'email' => ["required", "email:rfc,dns","unique:users"],
+            'email' => ["required", "email:rfc,dns"],
             'password' => ["required", "string", "min:6", "confirmed"],
             'avatar' => ["required", "string"],
             'address' => ["required", "string"],
             'phone_number' => ["required", "string"],
-            "marketing" => ["nullable", "boolean"]
+            'marketing' => ["nullable", "boolean"]
         ];
     }
 

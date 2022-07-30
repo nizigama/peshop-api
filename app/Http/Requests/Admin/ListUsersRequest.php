@@ -33,7 +33,7 @@ class ListUsersRequest extends FormRequest
             "page" => ["nullable", "numeric"],
             "limit" => ["nullable", "numeric"],
             "sortBy" => ["nullable", "string"],
-            "desc" => ["nullable", "in:true,false"],
+            "desc" => ["nullable", "boolean"],
             "first_name" => ["nullable", "string"],
             "email" => ["nullable", "email"],
             "phone" => ["nullable", "string"],
