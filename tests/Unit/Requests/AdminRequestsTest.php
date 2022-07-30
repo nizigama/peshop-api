@@ -238,7 +238,7 @@ it('that the request to list normal users is validated properly', function (stri
     [
         "desc",
         function () {
-            return faker()->randomElement([true, false]);
+            return faker()->randomElement(["true", "false"]);
         },
         [],
         false,
