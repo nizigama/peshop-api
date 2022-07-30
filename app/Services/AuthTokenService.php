@@ -12,7 +12,6 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Token\Plain;
-use Lcobucci\JWT\Validation\Constraint\IdentifiedBy;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Ramsey\Uuid\Uuid;
@@ -76,7 +75,8 @@ class AuthTokenService
     public function isTokenValid(string $token): bool|Token|Plain
     {
 
-        $token = $this->configuration->parser()->parse($token);
+        try {
+            $token = $this->configuration->parser()->parse($token);
 
         if (!($token instanceof Plain)) {
             return false;
@@ -91,5 +91,10 @@ class AuthTokenService
         }
         
         return $token;
+        } catch (\Throwable $th) {
+            // invalid token
+            return false;
+        }
+        
     }
 }

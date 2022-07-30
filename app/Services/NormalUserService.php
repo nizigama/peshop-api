@@ -4,21 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\DTOs\Admin\CreateAdminRequestDTO;
-use App\DTOs\Admin\ListUsersRequestDTO;
-use App\DTOs\Admin\LoginAdminRequestDTO;
 use App\DTOs\User\UpdateUserRequestDTO;
 use App\Models\JWT_Token;
 use App\Models\User;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Ramsey\Uuid\Uuid;
-use ReflectionClass;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class NormalUserService
 {
@@ -82,12 +74,12 @@ class NormalUserService
             throw new Exception("Admin users can't be deleted", 403);
         }
 
-        /**
-         * @todo check if the user isn't linked to other resources
-         */
-
         try {
-            $user->delete();
+            DB::transaction(function () use ($user) {
+
+                JWT_Token::where("user_id", $user->id)->delete();
+                $user->delete();
+            });
         } catch (\Exception $e) {
             Log::error("PEST-SHOP-API::error", [
                 "message" => "Failed to delete normal user in the NormalUserService class",
