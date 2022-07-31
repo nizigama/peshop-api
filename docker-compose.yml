@@ -7,9 +7,10 @@ services:
         ports:
             - '80:8000'
         volumes:
-            - '.:/var/www/html'
+            - './:/var/www/html'
         networks:
             - petshop-net
+        restart: unless-stopped
         depends_on:
             - mysql
             - mysql-test
