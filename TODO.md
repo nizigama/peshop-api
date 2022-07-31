@@ -1,6 +1,6 @@
 ## tasks todo
 
-- [ ] Build a petshop API app
+- [x] Build a petshop API app
 	- [ ] Admin endpoints
 		- [x] Create migrations/factories/models/seeders for files, users, jwt_tokens
 		- [x] Create all endpoints for admin api following the convention: /api/v1/{route_name}
@@ -10,5 +10,5 @@
 		- [x] Add swagger and write documentation for the admin endpoints
 		- [x] Add Laravel IDE Helper Generator, Larastan, PHP insights, PSR12
 		- [x] Replace sail with Dockerfile and docker-compose
-		- [ ] Write a readme file
+		- [x] Write a readme file
 - [ ] Currency exchange rate Laravel package
