@@ -9,3 +9,6 @@
 		- [x] Add tests for form requests, services and controller for the admin endpoints
 		- [x] Add swagger and write documentation for the admin endpoints
 		- [x] Add Laravel IDE Helper Generator, Larastan, PHP insights, PSR12
+		- [x] Replace sail with Dockerfile and docker-compose
+		- [ ] Write a readme file
+- [ ] Currency exchange rate Laravel package
