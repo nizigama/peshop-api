@@ -11,4 +11,4 @@
 		- [x] Add Laravel IDE Helper Generator, Larastan, PHP insights, PSR12
 		- [x] Replace sail with Dockerfile and docker-compose
 		- [x] Write a readme file
-- [ ] Currency exchange rate Laravel package
+- [x] Currency exchange rate Laravel package
