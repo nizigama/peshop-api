@@ -15,6 +15,10 @@ These steps should be run after cloning the repo
     ```bash
     docker container exec -it <app-container-name> php artisan migrate --seed
     ```
+- Generate the swagger documentation
+    ```bash
+    docker container exec -it <app-container-name> php artisan l5-swagger:generate
+    ```
 
 ### Regular Setup
 Run this command any other time you want to boot up the app after the first setup went well
