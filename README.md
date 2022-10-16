@@ -41,3 +41,4 @@ Run the following commands whenever needed
     ```bash
     docker container exec -it <app-container-name> php artisan test
     ```
+The swagger documentation is available on the `/api/docs` endpoint
