@@ -7,9 +7,17 @@ This project is intended to portray skills and knowledge of the laravel framewor
 These steps should be run after cloning the repo
 
 - Install docker and docker-compose, instructions for supported environments available [here](https://docs.docker.com/get-docker/)
+- Copy .env.example to .env
+    ```bash
+    cp .env.example .env
+    ```
 - Build environment and install composer dependencies
     ```bash
     docker-compose up --build
+    ```
+- Generate application key
+    ```bash
+    docker container exec -it <app-container-name> php artisan key:generate
     ```
 - Run migrations and seeds
     ```bash
@@ -32,16 +40,4 @@ Run the following commands whenever needed
 - Running tests
     ```bash
     docker container exec -it <app-container-name> php artisan test
-    ```
-- Analyse larastan code coverage
-    ```bash
-    docker container exec -it <app-container-name> ./vendor/bin/phpstan analyse
-    ```
-- See phpinsights results
-    ```bash
-    docker container exec -it <app-container-name> php artisan insights
-    ```
-- check psr12 coding standards
-    ```bash
-    docker container exec -it <app-container-name> ./vendor/bin/phpcs --standard=PSR12 app/
     ```
